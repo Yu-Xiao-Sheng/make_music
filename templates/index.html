@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 转增强版 MP3</title>
+    <!-- 引入 Ant Design CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.css" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        form {
+            max-width: 400px;
+            width: 100%;
+        }
+        .ant-btn {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>上传 MP4 文件以转换为增强版 MP3</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".mp4" required class="ant-input">
+        <br>
+        <label for="sample_rate">采样率 (默认48000):</label>
+        <input type="number" name="sample_rate" min="1" step="1" class="ant-input">
+        <br>
+        <label for="bit_rate">比特率 (默认320):</label>
+        <input type="number" name="bit_rate" min="1" step="1" class="ant-input">
+        <br>
+        <button type="submit" class="ant-btn ant-btn-primary">上传并转换</button>
+    </form>
+    <div id="result"></div>
+
+    <!-- 引入 Ant Design JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/4.16.13/antd.min.js"></script>
+    <script>
+        document.getElementById('uploadForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const originalFileName = formData.get('file').name;
+                const baseName = originalFileName.substring(0, originalFileName.lastIndexOf('.'));
+                a.download = `${baseName}.mp3`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                document.getElementById('result').innerText = '文件已成功下载';
+            } else {
+                const result = await response.json();
+                document.getElementById('result').innerText = result.error;
+            }
+        };
+    </script>
+</body>
+</html>
