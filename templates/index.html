@@ -35,6 +35,16 @@
         <br>
         <button type="submit" class="ant-btn ant-btn-primary">上传并转换</button>
     </form>
+    <div id="loading" style="display: none;">
+        <div class="ant-spin ant-spin-spinning">
+            <span class="ant-spin-dot ant-spin-dot-spin">
+                <i class="ant-spin-dot-item"></i>
+                <i class="ant-spin-dot-item"></i>
+                <i class="ant-spin-dot-item"></i>
+                <i class="ant-spin-dot-item"></i>
+            </span>
+        </div>
+    </div>
     <div id="result"></div>
 
     <!-- 引入 Ant Design JS -->
@@ -42,11 +52,14 @@
     <script>
         document.getElementById('uploadForm').onsubmit = async function(event) {
             event.preventDefault();
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').innerText = '';
             const formData = new FormData(this);
             const response = await fetch('/upload', {
                 method: 'POST',
                 body: formData
             });
+            document.getElementById('loading').style.display = 'none';
             if (response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
