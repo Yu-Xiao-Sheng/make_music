@@ -6,6 +6,7 @@
 
 - Python 3.x
 - pip
+- FFmpeg（用于处理多媒体文件）
 
 ## 安装
 
@@ -24,6 +25,12 @@
 3. 安装依赖：
    ```bash
    pip install -r requirements.txt
+   ```
+
+4. 安装 FFmpeg：
+   ```bash
+   sudo apt update
+   sudo apt install ffmpeg
    ```
 
 ## 运行应用
